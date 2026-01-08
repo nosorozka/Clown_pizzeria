@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head th:replace="~{fragments/layout :: head(${pizza.name})}"></head>
+  <body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <div class="container py-5">
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Domov</a></li>
+          <li class="breadcrumb-item">
+            <a th:href="@{/menu}" class="text-decoration-none">Menu</a>
+          </li>
+          <li class="breadcrumb-item active" th:text="${pizza.name}">Pizza</li>
+        </ol>
+      </nav>
+
+      <div class="row g-5">
+        <div class="col-lg-6">
+          <div class="card card-pizza">
+            <img
+              th:src="${pizza.imagePath != null} ? @{'/uploads/' + ${pizza.imagePath}} : 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800'"
+              class="card-img-top"
+              style="height: 400px; object-fit: cover"
+              th:alt="${pizza.name}"
+            />
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="d-flex align-items-center mb-3">
+            <span th:each="tag : ${pizza.tags}" class="badge badge-tag me-2" th:text="${tag.name}"
+              >Tag</span
+            >
+          </div>
+
+          <h1
+            class="display-5 fw-bold mb-3"
+            style="font-family: 'Fredoka One', cursive"
+            th:text="${pizza.name}"
+          >
+            Názov pizze
+          </h1>
+
+          <p class="lead text-muted mb-4" th:text="${pizza.description}">Popis</p>
+
+          <div class="mb-4">
+            <h5 class="mb-3"><i class="bi bi-list-check me-2"></i>Ingrediencie</h5>
+            <div class="d-flex flex-wrap gap-2">
+              <span
+                th:each="ingredient : ${pizza.ingredients}"
+                class="badge bg-secondary"
+                th:text="${ingredient.name}"
+                >Ingrediencia</span
+              >
+              <span th:if="${#sets.isEmpty(pizza.ingredients)}" class="text-muted"
+                >Klasický recept</span
+              >
+            </div>
+          </div>
+
+          <div
+            class="price-tag display-4 mb-4"
+            th:text="'Od €' + ${#numbers.formatDecimal(pizza.price, 1, 2)}"
+          >
+            €0.00
+          </div>
+
+          <!-- Add to Cart Form -->
+          <form id="addToCartForm" class="card card-pizza p-4">
+            <input type="hidden" name="pizzaId" th:value="${pizza.id}" />
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">Vyberte veľkosť</label>
+              <div class="d-flex flex-wrap gap-2">
+                <div th:each="size, stat : ${sizes}" class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="sizeId"
+                    th:id="'size' + ${size.id}"
+                    th:value="${size.id}"
+                    th:checked="${stat.first}"
+                    th:data-price="${pizza.price.add(size.price)}"
+                  />
+                  <label class="form-check-label" th:for="'size' + ${size.id}">
+                    <span th:text="${size.name}">Veľkosť</span>
+                    <span
+                      class="text-muted"
+                      th:text="'(+€' + ${#numbers.formatDecimal(size.price, 1, 2)} + ')'"
+                      >+€0.00</span
+                    >
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-bold">Množstvo</label>
+              <div class="input-group" style="max-width: 150px">
+                <button type="button" class="btn btn-outline-light" onclick="changeQuantity(-1)">
+                  <i class="bi bi-dash"></i>
+                </button>
+                <input
+                  type="number"
+                  name="quantity"
+                  id="quantity"
+                  class="form-control text-center"
+                  value="1"
+                  min="1"
+                  max="10"
+                />
+                <button type="button" class="btn btn-outline-light" onclick="changeQuantity(1)">
+                  <i class="bi bi-plus"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="fw-bold">Celkom:</span>
+              <span class="price-tag" id="totalPrice">€0.00</span>
+            </div>
+
+            <button type="submit" class="btn btn-cart btn-lg w-100">
+              <i class="bi bi-cart-plus me-2"></i>Pridať do košíka
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <script>
+      function changeQuantity(delta) {
+        const input = document.getElementById('quantity');
+        let value = parseInt(input.value) + delta;
+        if (value < 1) value = 1;
+        if (value > 10) value = 10;
+        input.value = value;
+        updateTotal();
+      }
+
+      function updateTotal() {
+        const selectedSize = document.querySelector('input[name="sizeId"]:checked');
+        const quantity = parseInt(document.getElementById('quantity').value) || 1;
+        if (selectedSize) {
+          const price = parseFloat(selectedSize.dataset.price);
+          const total = (price * quantity).toFixed(2);
+          document.getElementById('totalPrice').textContent = '€' + total;
+        }
+      }
+
+      document.querySelectorAll('input[name="sizeId"]').forEach((radio) => {
+        radio.addEventListener('change', updateTotal);
+      });
+
+      document.getElementById('quantity').addEventListener('change', updateTotal);
+
+      updateTotal();
+
+      document.getElementById('addToCartForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        fetch('/cart/add', {
+          method: 'POST',
+          body: new URLSearchParams(formData),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              const badge = document.getElementById('cartBadge');
+              if (badge) {
+                badge.textContent = data.cartCount;
+                badge.style.display = 'inline';
+              }
+              alert('Pridané do košíka!');
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            alert('Nepodarilo sa pridať do košíka');
+          });
+      });
+    </script>
+  </body>
+</html>
