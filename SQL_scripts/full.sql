@@ -276,12 +276,28 @@ INSERT INTO `mydb`.`ingredients` (`name`, `price`) VALUES
 ('Slanina', 2.50);
 
 -- Insert sample pizzas
-INSERT INTO `mydb`.`pizza` (`name`, `pizza_price`, `description`) VALUES 
-('Margherita', 8.99, 'Klasická pizza s paradajkovou omáčkou a mozzarellou'),
-('Pepperoni', 10.99, 'Sen každého milovníka pepperoni'),
-('Havajská', 11.99, 'Kombinácia šunky a ananásu'),
-('Vegetariánska', 9.99, 'Čerstvá zelenina na mozzarellovom základe'),
-('Mäsová', 13.99, 'Naložená pepperoni, šunkou a slaninou');
+INSERT INTO `mydb`.`pizza` (`name`, `pizza_price`, `description`,`image_path`) VALUES
+
+('Capricciosa', 10.99, 'Tradičná pizza so šunkou, šampiňónmi, mozzarellou a paradajkovou omáčkou', 'capricciosa.webp'),
+
+('Carbonara', 11.49, 'Krémová pizza inšpirovaná carbonara s pancettou, syrom a jemnou smotanovou omáčkou', 'carbonara-pizza.webp'),
+
+('Delicatezza Rustica', 12.49, 'Rustikálna pizza s prosciuttom, sušenými paradajkami, rukolou a parmezánom', 'delicatezza-rustica.webp'),
+
+('Diavola Piccante', 11.99, 'Pikantná pizza s feferónkami, salámou a výraznou paradajkovou omáčkou', 'diavola-piccante.webp'),
+
+('Funghi', 10.49, 'Jednoduchá a obľúbená pizza so šampiňónmi a mozzarellou', 'funghi.webp'),
+
+('Funghi al Panna', 10.99, 'Pizza so šampiňónmi na jemnej smotanovej omáčke s mozzarellou', 'funghi-al-panna.webp'),
+
+('Gluten Free Primavera', 12.99, 'Bezlepková pizza so sezónnou zeleninou, ľahkou omáčkou a mozzarellou', 'gluten-free-primavera.webp'),
+
+('Havajská', 11.99, 'Kombinácia šunky a ananásu na paradajkovom základe s mozzarellou', 'hawaii-classic.webp'),
+
+('La Crema Bianca', 11.79, 'Biela pizza so smotanovou omáčkou, syrom mozzarella a jemným cesnakom', 'la-crema-bianca.webp'),
+
+('Margherita Classica', 9.99, 'Klasická talianska pizza s paradajkovou omáčkou, mozzarellou a bazalkou', 'margherita-classica.webp')
+;
 
 -- Link pizzas with ingredients
 INSERT INTO `mydb`.`pizza_has_ingredients` (`pizza_id`, `ingredients_id`) VALUES 
