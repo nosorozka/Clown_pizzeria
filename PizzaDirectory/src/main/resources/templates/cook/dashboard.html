@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Kuchyňa')}"></head>
+  <body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <div class="container py-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 style="font-family: 'Fredoka One', cursive">
+          <i class="bi bi-fire me-2" style="color: var(--primary-red)"></i>Kuchyňa - Objednávky na
+          prípravu
+        </h1>
+      </div>
+
+      <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle me-2"></i><span th:text="${success}">Úspech</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+        <i class="bi bi-exclamation-circle me-2"></i><span th:text="${error}">Chyba</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      <div class="row g-4">
+        <div th:each="order : ${orders}" class="col-md-6 col-lg-4">
+          <div class="card card-pizza h-100">
+            <div
+              class="card-header bg-transparent border-0 pt-3 px-3 d-flex justify-content-between align-items-center"
+            >
+              <h5 class="mb-0">Objednávka #<span th:text="${order.id}">1</span></h5>
+              <span
+                class="badge"
+                th:classappend="${order.status.name() == 'PENDING'} ? 'bg-warning text-dark' : (${order.status.name() == 'COOKING'} ? 'bg-info' : 'bg-success')"
+                th:text="${order.status.displayName}"
+                >Stav</span
+              >
+            </div>
+            <div class="card-body">
+              <p class="text-muted mb-2">
+                <i class="bi bi-clock me-1"></i>
+                <span th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy')}">Dátum</span>
+              </p>
+              <p class="mb-3">
+                <i class="bi bi-person me-1"></i>
+                <span th:text="${order.user.fullName}">Zákazník</span>
+              </p>
+
+              <div class="mb-3">
+                <strong>Položky:</strong>
+                <ul class="list-unstyled mt-2 mb-0">
+                  <li th:each="item : ${order.orderItems}" class="small">
+                    <span th:text="${item.quantity}">1</span>×
+                    <span th:text="${item.pizza.name}">Pizza</span>
+                    <span
+                      th:if="${item.size != null}"
+                      class="text-muted"
+                      th:text="'(' + ${item.size.name} + ')'"
+                    ></span>
+                  </li>
+                </ul>
+              </div>
+
+              <form
+                th:action="@{/cook/orders/{id}/status(id=${order.id})}"
+                method="post"
+                class="d-flex gap-2"
+              >
+                <select name="status" class="form-select form-select-sm">
+                  <option
+                    th:each="s : ${statuses}"
+                    th:value="${s}"
+                    th:selected="${order.status == s}"
+                    th:text="${s.displayName}"
+                  >
+                    Stav
+                  </option>
+                </select>
+                <button type="submit" class="btn btn-pizza btn-sm">
+                  <i class="bi bi-check"></i>
+                </button>
+              </form>
+            </div>
+            <div class="card-footer bg-transparent border-0 pb-3 px-3">
+              <a
+                th:href="@{/cook/orders/{id}(id=${order.id})}"
+                class="btn btn-outline-light btn-sm w-100"
+              >
+                <i class="bi bi-eye me-1"></i>Detail
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(orders)}" class="col-12 text-center py-5">
+          <i class="bi bi-check-circle display-1 text-success"></i>
+          <h3 class="mt-3">Žiadne objednávky na prípravu</h3>
+          <p class="text-muted">Všetko je hotové!</p>
+        </div>
+      </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+  </body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Detail objednávky')}"></head>
+  <body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <div class="container py-5">
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a th:href="@{/cook}" class="text-decoration-none">Kuchyňa</a>
+          </li>
+          <li class="breadcrumb-item active" th:text="'Objednávka #' + ${order.id}">Objednávka</li>
+        </ol>
+      </nav>
+
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="card card-pizza">
+            <div
+              class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center"
+            >
+              <h5 class="mb-0"><i class="bi bi-list-check me-2"></i>Položky na prípravu</h5>
+              <span
+                class="badge"
+                th:classappend="${order.status.name() == 'PENDING'} ? 'bg-warning text-dark' : (${order.status.name() == 'COOKING'} ? 'bg-info' : 'bg-success')"
+                th:text="${order.status.displayName}"
+                >Stav</span
+              >
+            </div>
+            <div class="card-body p-0">
+              <div
+                th:each="item : ${order.orderItems}"
+                class="d-flex align-items-center p-3 border-bottom"
+                style="border-color: rgba(255, 255, 255, 0.1) !important"
+              >
+                <img
+                  th:src="${item.pizza.imagePath != null} ? @{'/uploads/' + ${item.pizza.imagePath}} : 'https://via.placeholder.com/80'"
+                  class="rounded me-3"
+                  style="width: 80px; height: 80px; object-fit: cover"
+                />
+                <div class="flex-grow-1">
+                  <h5 class="mb-1" th:text="${item.pizza.name}">Pizza</h5>
+                  <p class="mb-1 text-muted" th:if="${item.size != null}">
+                    Veľkosť: <span th:text="${item.size.name}">Veľkosť</span>
+                  </p>
+                  <div class="d-flex flex-wrap gap-1">
+                    <span
+                      th:each="ingredient : ${item.pizza.ingredients}"
+                      class="badge bg-secondary small"
+                      th:text="${ingredient.name}"
+                      >Ingrediencia</span
+                    >
+                  </div>
+                </div>
+                <div class="text-end">
+                  <span class="badge bg-primary fs-5" th:text="'×' + ${item.quantity}">×1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="card card-pizza mb-4">
+            <div class="card-body">
+              <h5 class="card-title mb-3"><i class="bi bi-person me-2"></i>Zákazník</h5>
+              <p class="mb-1">
+                <strong>Meno:</strong> <span th:text="${order.user.fullName}">Meno</span>
+              </p>
+              <p class="mb-0">
+                <strong>Dátum:</strong>
+                <span th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy')}">Dátum</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="card card-pizza">
+            <div class="card-body">
+              <h5 class="card-title mb-3"><i class="bi bi-arrow-repeat me-2"></i>Zmeniť stav</h5>
+              <form th:action="@{/cook/orders/{id}/status(id=${order.id})}" method="post">
+                <select name="status" class="form-select mb-3">
+                  <option
+                    th:each="s : ${statuses}"
+                    th:value="${s}"
+                    th:selected="${order.status == s}"
+                    th:text="${s.displayName}"
+                  >
+                    Stav
+                  </option>
+                </select>
+                <button type="submit" class="btn btn-pizza w-100">
+                  <i class="bi bi-check-circle me-2"></i>Aktualizovať stav
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <a th:href="@{/cook}" class="btn btn-outline-light mt-4">
+        <i class="bi bi-arrow-left me-2"></i>Späť na kuchyňu
+      </a>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+  </body>
+</html>
