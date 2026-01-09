@@ -123,10 +123,10 @@ DROP TABLE IF EXISTS `mydb`.`order_items` ;
 CREATE TABLE IF NOT EXISTS `mydb`.`order_items` (
   `orders_id` INT NOT NULL,
   `pizza_id` INT NOT NULL,
+  `size_id` INT NOT NULL,
   `quantity` INT NOT NULL,
-  `size_id` INT NULL,
   `unit_price` DECIMAL(10,2) NULL,
-  PRIMARY KEY (`orders_id`, `pizza_id`),
+  PRIMARY KEY (`orders_id`, `pizza_id`, `size_id`),
   INDEX `fk_orders_has_pizza_pizza1_idx` (`pizza_id` ASC),
   INDEX `fk_orders_has_pizza_orders1_idx` (`orders_id` ASC),
   INDEX `fk_order_items_size_idx` (`size_id` ASC),
@@ -143,7 +143,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`order_items` (
   CONSTRAINT `fk_order_items_size`
     FOREIGN KEY (`size_id`)
     REFERENCES `mydb`.`size` (`id`)
-    ON DELETE SET NULL
+    ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -307,8 +307,8 @@ INSERT INTO `mydb`.`pizza_has_tags` (`pizza_id`, `tags_id`) VALUES
 (4, 1),
 (5, 2), (5, 3);
 
--- Insert staff users (password: admin123 - BCrypt encoded)
+-- Insert staff users (password: Admin123! - BCrypt encoded)
 INSERT INTO `mydb`.`users` (`first_name`, `last_name`, `email`, `password`, `created_at`, `updated_at`, `roles_id`) VALUES 
-('Admin', 'Používateľ', 'admin@pizza.com', '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqrqQOtAV8x6EtqTqLqMqQOtAV8x6Et', CURDATE(), CURDATE(), 2),
-('Kuchár', 'Hlavný', 'kuchar@pizza.com', '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqrqQOtAV8x6EtqTqLqMqQOtAV8x6Et', CURDATE(), CURDATE(), 3),
-('Kuriér', 'Rýchly', 'kurier@pizza.com', '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqrqQOtAV8x6EtqTqLqMqQOtAV8x6Et', CURDATE(), CURDATE(), 4);
+('Admin', 'Používateľ', 'admin@pizza.com', '$2a$10$VxgvANRs8lhXIJ4t11mR9evYy8FyTfjXYX8r.DDSxCh9nZOWSsE5G', CURDATE(), CURDATE(), 2),
+('Kuchár', 'Hlavný', 'kuchar@pizza.com', '$2a$10$VxgvANRs8lhXIJ4t11mR9evYy8FyTfjXYX8r.DDSxCh9nZOWSsE5G', CURDATE(), CURDATE(), 3),
+('Kuriér', 'Rýchly', 'kurier@pizza.com', '$2a$10$VxgvANRs8lhXIJ4t11mR9evYy8FyTfjXYX8r.DDSxCh9nZOWSsE5G', CURDATE(), CURDATE(), 4);

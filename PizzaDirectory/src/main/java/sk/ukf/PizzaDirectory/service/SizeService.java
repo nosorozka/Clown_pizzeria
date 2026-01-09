@@ -2,7 +2,7 @@ package sk.ukf.PizzaDirectory.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sk.ukf.PizzaDirectory.entity.Size;
+import sk.ukf.PizzaDirectory.entity.PizzaSize;
 import sk.ukf.PizzaDirectory.exception.ResourceNotFoundException;
 import sk.ukf.PizzaDirectory.repository.SizeRepository;
 
@@ -19,17 +19,17 @@ public class SizeService {
     }
 
     @Transactional(readOnly = true)
-    public List<Size> findAll() {
+    public List<PizzaSize> findAll() {
         return sizeRepository.findAll();
     }
 
     @Transactional(readOnly = true)
-    public Size findById(Integer id) {
+    public PizzaSize findById(Integer id) {
         return sizeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Size", id));
     }
 
-    public Size save(Size size) {
+    public PizzaSize save(PizzaSize size) {
         return sizeRepository.save(size);
     }
 

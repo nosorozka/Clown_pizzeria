@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sk.ukf.PizzaDirectory.dto.UserRegistrationDto;
 import sk.ukf.PizzaDirectory.entity.Role;
+import sk.ukf.PizzaDirectory.entity.RoleName;
 import sk.ukf.PizzaDirectory.entity.User;
 import sk.ukf.PizzaDirectory.exception.EmailAlreadyExistsException;
 import sk.ukf.PizzaDirectory.exception.ResourceNotFoundException;
@@ -54,7 +55,7 @@ public class UserService {
             throw new EmailAlreadyExistsException(dto.getEmail(), true);
         }
 
-        Role userRole = roleRepository.findByName("ROLE_USER")
+        Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
                 .orElseThrow(() -> new ResourceNotFoundException("Role ROLE_USER not found"));
 
         User user = new User();

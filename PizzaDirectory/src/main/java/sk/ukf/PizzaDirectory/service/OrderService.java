@@ -83,7 +83,7 @@ public class OrderService {
             Pizza pizza = pizzaRepository.findById(item.getPizzaId())
                     .orElseThrow(() -> new ResourceNotFoundException("Pizza", item.getPizzaId()));
             
-            Size size = null;
+            PizzaSize size = null;
             if (item.getSizeId() != null) {
                 size = sizeRepository.findById(item.getSizeId()).orElse(null);
             }

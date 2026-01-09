@@ -23,9 +23,11 @@ USE `mydb` ;
 DROP TABLE IF EXISTS `mydb`.`pizza` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`pizza` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
-  `pizza_price` DECIMAL NOT NULL,
+  `pizza_price` DECIMAL(10,2) NOT NULL,
+  `image_path` VARCHAR(255) NULL,
+  `description` TEXT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -36,9 +38,9 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `mydb`.`ingredients` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`ingredients` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
-  `price` DECIMAL NOT NULL,
+  `price` DECIMAL(10,2) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -49,9 +51,10 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `mydb`.`roles` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`roles` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC))
 ENGINE = InnoDB;
 
 
@@ -61,7 +64,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `mydb`.`users` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`users` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `first_name` VARCHAR(45) NOT NULL,
   `last_name` VARCHAR(45) NOT NULL,
   `date_of_birth` DATE NULL,
@@ -72,6 +75,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`users` (
   `updated_at` DATE NOT NULL,
   `roles_id` INT NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC),
   INDEX `fk_users_roles_idx` (`roles_id` ASC) ,
   CONSTRAINT `fk_users_roles`
     FOREIGN KEY (`roles_id`)
@@ -87,32 +91,16 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `mydb`.`orders` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`orders` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `created_at` DATE NOT NULL,
   `updated_at` DATE NOT NULL,
-  `total_price` DECIMAL NOT NULL,
+  `total_price` DECIMAL(10,2) NOT NULL,
   `status` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mydb`.`orders_has_users`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`orders_has_users` ;
-
-CREATE TABLE IF NOT EXISTS `mydb`.`orders_has_users` (
-  `orders_id` INT NOT NULL,
   `users_id` INT NOT NULL,
-  PRIMARY KEY (`orders_id`, `users_id`),
-  INDEX `fk_orders_has_users_users1_idx` (`users_id` ASC) ,
-  INDEX `fk_orders_has_users_orders1_idx` (`orders_id` ASC) ,
-  CONSTRAINT `fk_orders_has_users_orders1`
-    FOREIGN KEY (`orders_id`)
-    REFERENCES `mydb`.`orders` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_orders_has_users_users1`
+  `delivery_address` VARCHAR(255) NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_orders_users_idx` (`users_id` ASC),
+  CONSTRAINT `fk_orders_users`
     FOREIGN KEY (`users_id`)
     REFERENCES `mydb`.`users` (`id`)
     ON DELETE NO ACTION
@@ -128,18 +116,26 @@ DROP TABLE IF EXISTS `mydb`.`order_items` ;
 CREATE TABLE IF NOT EXISTS `mydb`.`order_items` (
   `orders_id` INT NOT NULL,
   `pizza_id` INT NOT NULL,
+  `size_id` INT NOT NULL,
   `quantity` INT NOT NULL,
-  PRIMARY KEY (`orders_id`, `pizza_id`),
+  `unit_price` DECIMAL(10,2) NULL,
+  PRIMARY KEY (`orders_id`, `pizza_id`, `size_id`),
   INDEX `fk_orders_has_pizza_pizza1_idx` (`pizza_id` ASC) ,
   INDEX `fk_orders_has_pizza_orders1_idx` (`orders_id` ASC) ,
+  INDEX `fk_order_items_size_idx` (`size_id` ASC) ,
   CONSTRAINT `fk_orders_has_pizza_orders1`
     FOREIGN KEY (`orders_id`)
     REFERENCES `mydb`.`orders` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_orders_has_pizza_pizza1`
     FOREIGN KEY (`pizza_id`)
     REFERENCES `mydb`.`pizza` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_order_items_size`
+    FOREIGN KEY (`size_id`)
+    REFERENCES `mydb`.`size` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -175,9 +171,9 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `mydb`.`size` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`size` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
-  `price` DECIMAL NOT NULL,
+  `price` DECIMAL(10,2) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -212,7 +208,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `mydb`.`tags` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`tags` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
@@ -241,6 +237,14 @@ CREATE TABLE IF NOT EXISTS `mydb`.`pizza_has_tags` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+
+-- -----------------------------------------------------
+-- Insert default roles
+-- -----------------------------------------------------
+INSERT INTO `mydb`.`roles` (`name`) VALUES ('USER');
+INSERT INTO `mydb`.`roles` (`name`) VALUES ('COOK');
+INSERT INTO `mydb`.`roles` (`name`) VALUES ('COURIER');
+INSERT INTO `mydb`.`roles` (`name`) VALUES ('ADMIN');
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

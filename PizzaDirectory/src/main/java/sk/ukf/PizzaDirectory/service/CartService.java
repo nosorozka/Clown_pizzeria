@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 import sk.ukf.PizzaDirectory.dto.CartItem;
 import sk.ukf.PizzaDirectory.entity.Pizza;
-import sk.ukf.PizzaDirectory.entity.Size;
+import sk.ukf.PizzaDirectory.entity.PizzaSize;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class CartService {
         List<CartItem> cart = getCart(session);
         
         Pizza pizza = pizzaService.findById(pizzaId);
-        Size size = sizeService.findById(sizeId);
+        PizzaSize size = sizeService.findById(sizeId);
         
         // Calculate price: base pizza price + size surcharge
         BigDecimal unitPrice = pizza.getPrice().add(size.getPrice());
