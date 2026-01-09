@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Správa objednávok')}"></head>
+  <body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <div class="container py-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 style="font-family: 'Fredoka One', cursive">
+          <i class="bi bi-receipt me-2" style="color: var(--primary-yellow)"></i>Správa objednávok
+        </h1>
+      </div>
+
+      <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle me-2"></i><span th:text="${success}">Úspech</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      <!-- Status Filter -->
+      <div class="mb-4">
+        <div class="d-flex flex-wrap gap-2">
+          <a
+            th:href="@{/admin/orders}"
+            class="btn btn-sm"
+            th:classappend="${selectedStatus == null} ? 'btn-pizza' : 'btn-outline-light'"
+            >Všetky</a
+          >
+          <a
+            th:each="status : ${statuses}"
+            th:href="@{/admin/orders(status=${status})}"
+            class="btn btn-sm"
+            th:classappend="${selectedStatus == status} ? 'btn-pizza' : 'btn-outline-light'"
+            th:text="${status.displayName}"
+            >Stav</a
+          >
+        </div>
+      </div>
+
+      <div class="card card-pizza">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Objednávka #</th>
+                  <th>Zákazník</th>
+                  <th>Dátum</th>
+                  <th>Stav</th>
+                  <th>Celkom</th>
+                  <th>Akcie</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="order : ${orders}">
+                  <td th:text="'#' + ${order.id}">#1</td>
+                  <td th:text="${order.user.fullName}">Zákazník</td>
+                  <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy')}">Dátum</td>
+                  <td>
+                    <span
+                      class="badge"
+                      th:classappend="${order.status.name() == 'DELIVERED'} ? 'bg-success' : (${order.status.name() == 'CANCELLED'} ? 'bg-danger' : (${order.status.name() == 'COOKING'} ? 'bg-info' : (${order.status.name() == 'READY'} ? 'bg-primary' : (${order.status.name() == 'DELIVERING'} ? 'bg-info' : 'bg-warning text-dark'))))"
+                      th:text="${order.status.displayName}"
+                      >Stav</span
+                    >
+                  </td>
+                  <td
+                    class="price-tag"
+                    style="font-size: 1rem"
+                    th:text="'€' + ${#numbers.formatDecimal(order.totalPrice, 1, 2)}"
+                  >
+                    €0.00
+                  </td>
+                  <td>
+                    <a
+                      th:href="@{/admin/orders/{id}(id=${order.id})}"
+                      class="btn btn-sm btn-outline-light"
+                    >
+                      <i class="bi bi-eye"></i>
+                    </a>
+                  </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(orders)}">
+                  <td colspan="6" class="text-center text-muted py-4">Žiadne objednávky</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <a th:href="@{/admin}" class="btn btn-outline-light mt-4">
+        <i class="bi bi-arrow-left me-2"></i>Späť na administráciu
+      </a>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+  </body>
+</html>
