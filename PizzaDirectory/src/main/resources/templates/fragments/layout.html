@@ -159,6 +159,105 @@
       .table-dark {
         --bs-table-bg: var(--card-bg);
       }
+
+      /* Fix text visibility on dark backgrounds */
+      .card-body,
+      .card-text,
+      .card-title,
+      .list-group-item,
+      .modal-content,
+      .offcanvas,
+      label,
+      p,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      .form-label {
+        color: var(--text-light);
+      }
+
+      .card {
+        background: var(--card-bg);
+        color: var(--text-light);
+      }
+
+      .list-group-item {
+        background: var(--card-bg);
+        border-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .modal-content {
+        background: var(--card-bg);
+      }
+
+      .text-muted {
+        color: #a8b2c1 !important;
+      }
+
+      .alert {
+        color: var(--text-light);
+      }
+
+      .alert-success {
+        background: rgba(25, 135, 84, 0.2);
+        border-color: #198754;
+      }
+
+      .alert-danger {
+        background: rgba(220, 53, 69, 0.2);
+        border-color: #dc3545;
+      }
+
+      .alert-warning {
+        background: rgba(255, 193, 7, 0.2);
+        border-color: #ffc107;
+        color: #ffc107 !important;
+      }
+
+      .alert-info {
+        background: rgba(13, 202, 240, 0.2);
+        border-color: #0dcaf0;
+      }
+
+      /* Form placeholders */
+      .form-control::placeholder {
+        color: #6c757d;
+      }
+
+      /* Dropdown menus */
+      .dropdown-menu {
+        background: var(--card-bg);
+        border-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .dropdown-item {
+        color: var(--text-light);
+      }
+
+      .dropdown-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--primary-yellow);
+      }
+
+      /* Badge fixes */
+      .badge {
+        color: inherit;
+      }
+
+      .bg-warning {
+        color: #1a1a2e !important;
+      }
+
+      .bg-success,
+      .bg-danger,
+      .bg-info,
+      .bg-primary,
+      .bg-secondary {
+        color: white !important;
+      }
     </style>
   </head>
 
