@@ -116,4 +116,25 @@ public class OrderController {
         redirectAttributes.addFlashAttribute("success", "Objednávka úspešne odoslaná! Objednávka #" + order.getId());
         return "redirect:/orders/" + order.getId();
     }
+
+    @PostMapping("/{id}/cancel")
+    public String canceOrder(
+            @PathVariable Integer id,
+            @AuthenticationPrincipal UserDetails userDetails,
+            RedirectAttributes redirectAttributes
+    ) {
+        User user = userService.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Pouzivatel bol nenajdeny"));
+
+        try {
+            orderService.cancelOrder(id, user.getId());
+            redirectAttributes.addFlashAttribute("success", "Objednavka bola zrusena");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("error", "Tuto objednavku nie je mozna zrusit");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", "Nemate opravemie zrusit tuto objednavku");
+        }
+
+        return "redirect:/orders/" + id;
+    }
 }

@@ -115,4 +115,19 @@ public class OrderService {
         }
         orderRepository.deleteById(id);
     }
+
+    public Order cancelOrder(Integer id, Integer userId) {
+        Order order = findById(id);
+
+        if (!order.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("");
+        }
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new IllegalStateException("");
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+        return orderRepository.save(order);
+    }
 }

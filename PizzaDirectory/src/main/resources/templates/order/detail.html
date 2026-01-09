@@ -22,6 +22,10 @@
         <i class="bi bi-check-circle me-2"></i><span th:text="${success}">Úspech</span>
       </div>
 
+      <div th:if="${error}" class="alert alert-danger">
+        <i class="bi bi-exclamation-circle me-2"></i><span th:text="${error}">Chyba</span>
+      </div>
+
       <div class="row g-4">
         <div class="col-lg-8">
           <div class="card card-pizza">
@@ -89,6 +93,12 @@
               </div>
             </div>
           </div>
+
+          <form class="mb-3" th:if="${order.status.name() == 'PENDING'}" th:action="@{/orders/{id}/cancel(id=${order.id})}" method="post" onsubmit="return confirm('Naozaj chcete zrusit tuto objednavku?')">
+            <button type="submit" class="btn btn-danger w-100">
+              <i></i>Zrusit objednavku
+            </button>
+          </form>
 
           <a th:href="@{/orders}" class="btn btn-outline-light w-100">
             <i class="bi bi-arrow-left me-2"></i>Späť na objednávky
