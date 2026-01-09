@@ -1,8 +1,6 @@
 package sk.ukf.PizzaDirectory.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "roles")
@@ -13,15 +11,14 @@ public class Role {
     @Column(name = "id")
     private Integer id;
 
-    @NotBlank(message = "Názov role je povinný")
-    @Size(max = 45, message = "Názov role nesmie presiahnuť 45 znakov")
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "name", nullable = false, unique = true, length = 45)
+    private RoleName name;
 
     public Role() {
     }
 
-    public Role(String name) {
+    public Role(RoleName name) {
         this.name = name;
     }
 
@@ -33,11 +30,11 @@ public class Role {
         this.id = id;
     }
 
-    public String getName() {
+    public RoleName getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(RoleName name) {
         this.name = name;
     }
 }

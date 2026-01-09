@@ -26,10 +26,11 @@ public class OrderItem {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    // Store size info at order time
+    // Size is part of composite PK
+    @Id
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "size_id")
-    private Size size;
+    private PizzaSize size;
 
     // Store price at order time to preserve historical pricing
     @Column(name = "unit_price")
@@ -44,7 +45,7 @@ public class OrderItem {
         this.quantity = quantity;
     }
 
-    public OrderItem(Order order, Pizza pizza, Integer quantity, Size size, BigDecimal unitPrice) {
+    public OrderItem(Order order, Pizza pizza, Integer quantity, PizzaSize size, BigDecimal unitPrice) {
         this.order = order;
         this.pizza = pizza;
         this.quantity = quantity;
@@ -76,11 +77,11 @@ public class OrderItem {
         this.quantity = quantity;
     }
 
-    public Size getSize() {
+    public PizzaSize getSize() {
         return size;
     }
 
-    public void setSize(Size size) {
+    public void setSize(PizzaSize size) {
         this.size = size;
     }
 

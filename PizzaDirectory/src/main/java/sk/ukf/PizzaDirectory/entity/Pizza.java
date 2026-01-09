@@ -1,7 +1,10 @@
 package sk.ukf.PizzaDirectory.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -46,7 +49,7 @@ public class Pizza {
             joinColumns = @JoinColumn(name = "pizza_id"),
             inverseJoinColumns = @JoinColumn(name = "size_id")
     )
-    private Set<Size> sizes = new HashSet<>();
+    private Set<PizzaSize> sizes = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -112,11 +115,11 @@ public class Pizza {
         this.ingredients = ingredients;
     }
 
-    public Set<Size> getSizes() {
+    public Set<PizzaSize> getSizes() {
         return sizes;
     }
 
-    public void setSizes(Set<Size> sizes) {
+    public void setSizes(Set<PizzaSize> sizes) {
         this.sizes = sizes;
     }
 
@@ -139,12 +142,12 @@ public class Pizza {
         ingredient.getPizzas().remove(this);
     }
 
-    public void addSize(Size size) {
+    public void addSize(PizzaSize size) {
         this.sizes.add(size);
         size.getPizzas().add(this);
     }
 
-    public void removeSize(Size size) {
+    public void removeSize(PizzaSize size) {
         this.sizes.remove(size);
         size.getPizzas().remove(this);
     }
