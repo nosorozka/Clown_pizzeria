@@ -6,7 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import sk.ukf.PizzaDirectory.entity.Size;
+import sk.ukf.PizzaDirectory.entity.PizzaSize;
 import sk.ukf.PizzaDirectory.service.SizeService;
 
 @Controller
@@ -27,7 +27,7 @@ public class AdminSizeController {
 
     @GetMapping("/new")
     public String createForm(Model model) {
-        model.addAttribute("size", new Size());
+        model.addAttribute("size", new PizzaSize());
         return "admin/sizes/form";
     }
 
@@ -39,7 +39,7 @@ public class AdminSizeController {
 
     @PostMapping
     public String save(
-            @Valid @ModelAttribute("size") Size size,
+            @Valid @ModelAttribute("size") PizzaSize size,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes
     ) {

@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sk.ukf.PizzaDirectory.entity.Ingredient;
 import sk.ukf.PizzaDirectory.entity.Pizza;
-import sk.ukf.PizzaDirectory.entity.Size;
+import sk.ukf.PizzaDirectory.entity.PizzaSize;
 import sk.ukf.PizzaDirectory.entity.Tag;
 import sk.ukf.PizzaDirectory.service.*;
 
@@ -100,7 +100,7 @@ public class AdminPizzaController {
         }
         pizza.setIngredients(ingredients);
 
-        Set<Size> sizes = new HashSet<>();
+        Set<PizzaSize> sizes = new HashSet<>();
         if (sizeIds != null) {
             for (Integer id : sizeIds) {
                 sizes.add(sizeService.findById(id));

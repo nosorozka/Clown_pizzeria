@@ -2,10 +2,11 @@ package sk.ukf.PizzaDirectory.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import sk.ukf.PizzaDirectory.entity.Role;
+import sk.ukf.PizzaDirectory.entity.RoleName;
 
 import java.util.Optional;
 
 public interface RoleRepository extends JpaRepository<Role, Integer> {
-    Optional<Role> findByName(String name);
+    Optional<Role> findByName(RoleName name);
 }
 
