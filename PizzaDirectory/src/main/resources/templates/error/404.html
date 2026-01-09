@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Stránka nenájdená')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <div class="container py-5 text-center">
+        <div class="py-5">
+            <i class="bi bi-emoji-dizzy display-1" style="color: var(--primary-yellow);"></i>
+            <h1 class="display-4 mt-4" style="font-family: 'Fredoka One', cursive;">404</h1>
+            <h2 class="mb-4">Stránka nenájdená</h2>
+            <p class="text-muted mb-4">Táto pizza bola zjedená! Stránka, ktorú hľadáte, neexistuje.</p>
+            <a th:href="@{/}" class="btn btn-pizza">
+                <i class="bi bi-house me-2"></i>Späť na domovskú stránku
+            </a>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>
