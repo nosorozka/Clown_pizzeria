@@ -51,7 +51,7 @@
                         <p class="mb-1"><strong>Meno:</strong> <span th:text="${order.user.fullName}">Meno</span></p>
                         <p class="mb-1"><strong>Email:</strong> <span th:text="${order.user.email}">Email</span></p>
                         <p class="mb-1"><strong>Adresa:</strong> <span th:text="${order.user.address} ?: 'Nie je uvedená'">Adresa</span></p>
-                        <p class="mb-0"><strong>Dátum:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy')}">Dátum</span></p>
+                        <p class="mb-0"><strong>Dátum:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy | HH:mm:ss')}">Dátum</span></p>
                     </div>
                 </div>
 

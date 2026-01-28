@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,11 +17,12 @@ public class Order {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDate createdAt;
+    @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
+    private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false)
-    private LocalDate updatedAt;
+    @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
+    private LocalDateTime updatedAt;
+
 
     @NotNull(message = "Celková cena je povinná")
     @DecimalMin(value = "0.0", inclusive = true, message = "Celková cena musí byť 0 alebo viac")
@@ -50,17 +51,14 @@ public class Order {
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDate.now();
-        this.updatedAt = LocalDate.now();
         if (this.status == null) {
             this.status = OrderStatus.PENDING;
         }
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDate.now();
-    }
+
+    //@PreUpdate
+    //protected void onUpdate() { this.updatedAt = LocalDateTime.now(); }
 
     public Integer getId() {
         return id;
@@ -70,21 +68,17 @@ public class Order {
         this.id = id;
     }
 
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
-    }
+    //public void setCreatedAt(LocalDate createdAt) { this.createdAt = createdAt; }
 
-    public LocalDate getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDate updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    //public void setUpdatedAt(LocalDate updatedAt) { this.updatedAt = updatedAt; }
 
     public BigDecimal getTotalPrice() {
         return totalPrice;

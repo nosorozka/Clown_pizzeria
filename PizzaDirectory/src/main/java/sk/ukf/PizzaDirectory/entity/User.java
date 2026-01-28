@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,11 +48,11 @@ public class User {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDate createdAt;
+    @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
+    private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false)
-    private LocalDate updatedAt;
+    @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
+    private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "roles_id", nullable = false)
@@ -71,16 +72,14 @@ public class User {
         this.role = role;
     }
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDate.now();
-        this.updatedAt = LocalDate.now();
-    }
+//    @PrePersist
+//    protected void onCreate() {
+//        this.createdAt = LocalDate.now();
+//        this.updatedAt = LocalDate.now();
+//    }
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDate.now();
-    }
+    //@PreUpdate
+    //protected void onUpdate() { this.updatedAt = LocalDate.now(); }
 
     public Integer getId() {
         return id;
@@ -138,21 +137,17 @@ public class User {
         this.address = address;
     }
 
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
-    }
+    //public void setCreatedAt(LocalDate createdAt) { this.createdAt = createdAt; }
 
-    public LocalDate getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDate updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    //public void setUpdatedAt(LocalDate updatedAt) { this.updatedAt = updatedAt; }
 
     public Role getRole() {
         return role;

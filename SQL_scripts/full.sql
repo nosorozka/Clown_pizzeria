@@ -66,8 +66,9 @@ CREATE TABLE IF NOT EXISTS `mydb`.`users` (
   `email` VARCHAR(45) NOT NULL,
   `password` VARCHAR(255) NOT NULL,
   `address` VARCHAR(255) NULL,
-  `created_at` DATE NOT NULL,
-  `updated_at` DATE NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
   `roles_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC),
@@ -87,8 +88,9 @@ DROP TABLE IF EXISTS `mydb`.`orders` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`orders` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `created_at` DATE NOT NULL,
-  `updated_at` DATE NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
   `total_price` DECIMAL(10,2) NOT NULL,
   `status` ENUM('PENDING', 'COOKING', 'READY', 'DELIVERING', 'DELIVERED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
   `users_id` INT NOT NULL,
@@ -325,6 +327,6 @@ INSERT INTO `mydb`.`pizza_has_tags` (`pizza_id`, `tags_id`) VALUES
 
 -- Insert staff users (password: Admin123! - BCrypt encoded)
 INSERT INTO `mydb`.`users` (`first_name`, `last_name`, `email`, `password`, `created_at`, `updated_at`, `roles_id`) VALUES 
-('Admin', 'Používateľ', 'admin@pizza.com', '$2a$10$VxgvANRs8lhXIJ4t11mR9evYy8FyTfjXYX8r.DDSxCh9nZOWSsE5G', CURDATE(), CURDATE(), 2),
-('Kuchár', 'Hlavný', 'kuchar@pizza.com', '$2a$10$VxgvANRs8lhXIJ4t11mR9evYy8FyTfjXYX8r.DDSxCh9nZOWSsE5G', CURDATE(), CURDATE(), 3),
-('Kuriér', 'Rýchly', 'kurier@pizza.com', '$2a$10$VxgvANRs8lhXIJ4t11mR9evYy8FyTfjXYX8r.DDSxCh9nZOWSsE5G', CURDATE(), CURDATE(), 4);
+('Admin', 'Používateľ', 'admin@pizza.com', '$2a$10$VxgvANRs8lhXIJ4t11mR9evYy8FyTfjXYX8r.DDSxCh9nZOWSsE5G', NOW(), NOW(), 2),
+('Kuchár', 'Hlavný', 'kuchar@pizza.com', '$2a$10$VxgvANRs8lhXIJ4t11mR9evYy8FyTfjXYX8r.DDSxCh9nZOWSsE5G', NOW(), NOW(), 3),
+('Kuriér', 'Rýchly', 'kurier@pizza.com', '$2a$10$VxgvANRs8lhXIJ4t11mR9evYy8FyTfjXYX8r.DDSxCh9nZOWSsE5G', NOW(), NOW(), 4);

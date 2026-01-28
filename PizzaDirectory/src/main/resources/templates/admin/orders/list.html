@@ -54,7 +54,7 @@
                 <tr th:each="order : ${orders}">
                   <td th:text="'#' + ${order.id}">#1</td>
                   <td th:text="${order.user.fullName}">Zákazník</td>
-                  <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy')}">Dátum</td>
+                  <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy | HH:mm:ss')}">Dátum</td>
                   <td>
                     <span
                       class="badge"

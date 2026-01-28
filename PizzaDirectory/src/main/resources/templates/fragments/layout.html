@@ -32,8 +32,10 @@
       body {
         font-family: 'Nunito', sans-serif;
         background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-        min-height: 100vh;
         color: var(--text-light);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
       }
 
       .navbar {
@@ -134,7 +136,7 @@
         background: rgba(26, 26, 46, 0.95);
         border-top: 2px solid var(--primary-red);
         padding: 2rem 0;
-        margin-top: 4rem;
+        margin-top: auto;
       }
 
       .form-control,
@@ -258,6 +260,11 @@
       .bg-secondary {
         color: white !important;
       }
+
+      html, body {
+        height: 100%;
+      }
+
     </style>
   </head>
 
@@ -380,6 +387,7 @@
       <p class="text-muted small mb-0">&copy; 2026 Clown Pizzeria. Všetky práva vyhradené.</p>
     </div>
   </footer>
+
 
   <!-- Scripts Fragment -->
   <div th:fragment="scripts">
