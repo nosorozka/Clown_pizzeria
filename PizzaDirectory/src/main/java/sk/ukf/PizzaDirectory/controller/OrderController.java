@@ -104,10 +104,15 @@ public class OrderController {
         User user = userService.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
+        // Check if user can make orders (only ROLE_USER)
+        if (!userService.canMakeOrders(user)) {
+            redirectAttributes.addFlashAttribute("error", "Nemáte oprávnenie vytvárať objednávky");
+            return "redirect:/";
+        }
+        
         // Update user address if provided
         if (address != null && !address.isBlank()) {
-            user.setAddress(address);
-            userService.save(user);
+            userService.updateAddress(user, address);
         }
         
         Order order = orderService.createOrder(user, cartItems, address);

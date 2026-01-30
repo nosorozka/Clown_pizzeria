@@ -20,7 +20,7 @@ public class IngredientService {
 
     @Transactional(readOnly = true)
     public List<Ingredient> findAll() {
-        return ingredientRepository.findAll();
+        return ingredientRepository.findByDeletedFalse();
     }
 
     @Transactional(readOnly = true)
@@ -34,10 +34,14 @@ public class IngredientService {
     }
 
     public void deleteById(Integer id) {
-        if (!ingredientRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Ingredient", id);
-        }
-        ingredientRepository.deleteById(id);
+        Ingredient ingredient = findById(id);
+        softDelete(id);
+    }
+
+    public void softDelete(Integer id) {
+        Ingredient ingredient = findById(id);
+        ingredient.softDelete();
+        ingredientRepository.save(ingredient);
     }
 }
 

@@ -59,13 +59,38 @@ public class OrderService {
         return orderRepository.findByStatusInOrderByCreatedAtDesc(statuses);
     }
 
-    // For cook: PENDING and COOKING orders
+    // For cook: show unassigned or assigned to this cook
+    @Transactional(readOnly = true)
+    public List<Order> findOrdersForCook(Integer cookId) {
+        List<OrderStatus> statuses = Arrays.asList(OrderStatus.PENDING, OrderStatus.COOKING);
+        return orderRepository.findUnassignedOrAssignedToCook(cookId, statuses);
+    }
+
+    // For courier: show unassigned or assigned to this courier
+    @Transactional(readOnly = true)
+    public List<Order> findOrdersForCourier(Integer courierId) {
+        List<OrderStatus> statuses = Arrays.asList(OrderStatus.READY, OrderStatus.DELIVERING);
+        return orderRepository.findUnassignedOrAssignedToCourier(courierId, statuses);
+    }
+
+    /** Orders completed by this cook (assigned to cook, any status). */
+    @Transactional(readOnly = true)
+    public List<Order> findCompletedByCook(Integer cookId) {
+        return orderRepository.findByCookIdOrderByCreatedAtDesc(cookId);
+    }
+
+    /** Orders completed by this courier (assigned to courier, any status). */
+    @Transactional(readOnly = true)
+    public List<Order> findCompletedByCourier(Integer courierId) {
+        return orderRepository.findByCourierIdOrderByCreatedAtDesc(courierId);
+    }
+
+    // Legacy methods (keep for backward compatibility)
     @Transactional(readOnly = true)
     public List<Order> findOrdersForCook() {
         return findByStatuses(Arrays.asList(OrderStatus.PENDING, OrderStatus.COOKING));
     }
 
-    // For courier: READY and DELIVERING orders
     @Transactional(readOnly = true)
     public List<Order> findOrdersForCourier() {
         return findByStatuses(Arrays.asList(OrderStatus.READY, OrderStatus.DELIVERING));
@@ -129,5 +154,79 @@ public class OrderService {
 
         order.setStatus(OrderStatus.CANCELLED);
         return orderRepository.save(order);
+    }
+
+    // Update status with automatic assignment
+    public Order updateStatusWithAssignment(Integer orderId, OrderStatus newStatus, Integer userId) {
+        Order order = findById(orderId);
+        OrderStatus oldStatus = order.getStatus();
+        
+        // Assign cook when transitioning to COOKING
+        if (newStatus == OrderStatus.COOKING && order.getCook() == null) {
+            User cook = new User();
+            cook.setId(userId);
+            order.assignCook(cook);
+        }
+        
+        // Assign courier when transitioning to DELIVERING
+        if (newStatus == OrderStatus.DELIVERING && order.getCourier() == null) {
+            User courier = new User();
+            courier.setId(userId);
+            order.assignCourier(courier);
+        }
+        
+        order.setStatus(newStatus);
+        return orderRepository.save(order);
+    }
+
+    /** Cook can change order status only if they are the customer OR current status is not DELIVERING/DELIVERED. */
+    public boolean canCookChangeStatus(Order order, User cook) {
+        if (order.getUser() != null && order.getUser().getId().equals(cook.getId())) {
+            return true;
+        }
+        OrderStatus s = order.getStatus();
+        return s != OrderStatus.DELIVERING && s != OrderStatus.DELIVERED;
+    }
+
+    // Check if status can be rolled back
+    public boolean canRollbackStatus(Order order, User user, String roleName) {
+        OrderStatus currentStatus = order.getStatus();
+        
+        // Admin can rollback any status
+        if ("ROLE_ADMIN".equals(roleName)) {
+            return true;
+        }
+        
+        // Cook can rollback COOKING -> PENDING only for own orders
+        if ("ROLE_COOK".equals(roleName)) {
+            return currentStatus == OrderStatus.COOKING && 
+                   order.getCook() != null && 
+                   order.getCook().getId().equals(user.getId());
+        }
+        
+        // Courier can rollback DELIVERING -> READY only for own orders
+        if ("ROLE_COURIER".equals(roleName)) {
+            return currentStatus == OrderStatus.DELIVERING && 
+                   order.getCourier() != null && 
+                   order.getCourier().getId().equals(user.getId());
+        }
+        
+        return false;
+    }
+
+    // Get previous status for rollback
+    public OrderStatus getPreviousStatus(OrderStatus currentStatus) {
+        switch (currentStatus) {
+            case COOKING:
+                return OrderStatus.PENDING;
+            case READY:
+                return OrderStatus.COOKING;
+            case DELIVERING:
+                return OrderStatus.READY;
+            case DELIVERED:
+                return OrderStatus.DELIVERING;
+            default:
+                return currentStatus;
+        }
     }
 }

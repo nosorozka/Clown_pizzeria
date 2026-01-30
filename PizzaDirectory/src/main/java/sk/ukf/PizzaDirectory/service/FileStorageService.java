@@ -25,6 +25,7 @@ public class FileStorageService {
         uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
         try {
             Files.createDirectories(uploadPath);
+            System.out.println("Upload directory initialized at: " + uploadPath.toString());
         } catch (IOException e) {
             throw new RuntimeException("Could not create upload directory", e);
         }
@@ -50,8 +51,11 @@ public class FileStorageService {
         try {
             Path targetLocation = uploadPath.resolve(newFilename);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("File stored successfully: " + targetLocation.toString());
             return newFilename;
         } catch (IOException e) {
+            System.err.println("Failed to store file: " + originalFilename);
+            e.printStackTrace();
             throw new RuntimeException("Could not store file " + originalFilename, e);
         }
     }

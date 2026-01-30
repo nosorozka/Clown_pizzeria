@@ -52,7 +52,7 @@ public class AuthController {
         
         // Check password match
         if (!dto.isPasswordMatching()) {
-            bindingResult.rejectValue("confirmPassword", "error.user", "Passwords do not match");
+            bindingResult.rejectValue("confirmPassword", "error.user", "Heslá sa nezhodujú");
         }
         
         if (bindingResult.hasErrors()) {
@@ -61,7 +61,7 @@ public class AuthController {
 
         try {
             userService.registerUser(dto);
-            redirectAttributes.addFlashAttribute("success", "Registration successful! Please login.");
+            redirectAttributes.addFlashAttribute("success", "Registrácia úspešná! Prosím prihláste sa.");
             return "redirect:/auth/login";
         } catch (EmailAlreadyExistsException e) {
             bindingResult.rejectValue("email", "error.user", e.getMessage());

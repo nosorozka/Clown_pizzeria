@@ -37,6 +37,14 @@ public class Order {
     @JoinColumn(name = "users_id", nullable = false)
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cook_id")
+    private User cook;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "courier_id")
+    private User courier;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
@@ -121,5 +129,30 @@ public class Order {
     public void removeOrderItem(OrderItem item) {
         orderItems.remove(item);
         item.setOrder(null);
+    }
+
+    public User getCook() {
+        return cook;
+    }
+
+    public void setCook(User cook) {
+        this.cook = cook;
+    }
+
+    public User getCourier() {
+        return courier;
+    }
+
+    public void setCourier(User courier) {
+        this.courier = courier;
+    }
+
+    // Helper methods for assignment
+    public void assignCook(User cook) {
+        this.cook = cook;
+    }
+
+    public void assignCourier(User courier) {
+        this.courier = courier;
     }
 }

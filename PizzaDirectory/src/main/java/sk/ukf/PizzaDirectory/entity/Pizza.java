@@ -35,6 +35,16 @@ public class Pizza {
     @Column(name = "description")
     private String description;
 
+    @Size(max = 100, message = "Slug nesmie presiahnuť 100 znakov")
+    @Column(name = "slug", unique = true, length = 100)
+    private String slug;
+
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private java.time.LocalDateTime deletedAt;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "pizza_has_ingredients",
@@ -160,5 +170,39 @@ public class Pizza {
     public void removeTag(Tag tag) {
         this.tags.remove(tag);
         tag.getPizzas().remove(this);
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public java.time.LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(java.time.LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    // Soft delete helper method
+    public void softDelete() {
+        this.deleted = true;
+        this.deletedAt = java.time.LocalDateTime.now();
+    }
+
+    public boolean isDeleted() {
+        return deleted != null && deleted;
     }
 }

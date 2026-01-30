@@ -24,7 +24,11 @@ CREATE TABLE IF NOT EXISTS `mydb`.`pizza` (
   `pizza_price` DECIMAL(10,2) NOT NULL,
   `image_path` VARCHAR(255) NULL,
   `description` TEXT NULL,
-  PRIMARY KEY (`id`))
+  `slug` VARCHAR(100) NOT NULL,
+  `deleted` BOOLEAN NOT NULL DEFAULT FALSE,
+  `deleted_at` DATETIME NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `slug_UNIQUE` (`slug` ASC))
 ENGINE = InnoDB;
 
 
@@ -37,6 +41,8 @@ CREATE TABLE IF NOT EXISTS `mydb`.`ingredients` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `price` DECIMAL(10,2) NOT NULL,
+  `deleted` BOOLEAN NOT NULL DEFAULT FALSE,
+  `deleted_at` DATETIME NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -68,6 +74,9 @@ CREATE TABLE IF NOT EXISTS `mydb`.`users` (
   `address` VARCHAR(255) NULL,
   `created_at` DATE NOT NULL,
   `updated_at` DATE NOT NULL,
+  `deleted` BOOLEAN NOT NULL DEFAULT FALSE,
+  `deleted_at` DATETIME NULL,
+  `avatar_path` VARCHAR(255) NULL,
   `roles_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC),
@@ -92,10 +101,24 @@ CREATE TABLE IF NOT EXISTS `mydb`.`orders` (
   `total_price` DECIMAL(10,2) NOT NULL,
   `status` ENUM('PENDING', 'COOKING', 'READY', 'DELIVERING', 'DELIVERED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
   `users_id` INT NOT NULL,
+  `cook_id` INT NULL,
+  `courier_id` INT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_orders_users1_idx` (`users_id` ASC),
+  INDEX `fk_orders_cook_idx` (`cook_id` ASC),
+  INDEX `fk_orders_courier_idx` (`courier_id` ASC),
   CONSTRAINT `fk_orders_users1`
     FOREIGN KEY (`users_id`)
+    REFERENCES `mydb`.`users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_orders_cook`
+    FOREIGN KEY (`cook_id`)
+    REFERENCES `mydb`.`users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_orders_courier`
+    FOREIGN KEY (`courier_id`)
     REFERENCES `mydb`.`users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)

@@ -34,7 +34,10 @@ public class User {
     private LocalDate dateOfBirth;
 
     @NotBlank(message = "Email je povinný")
-    @Email(message = "Email musí byť platný")
+    @Pattern(
+        regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+        message = "Zadajte platnú emailovú adresu"
+    )
     @Size(max = 45, message = "Email nesmie presiahnuť 45 znakov")
     @Column(name = "email", nullable = false, unique = true)
     private String email;
@@ -53,6 +56,16 @@ public class User {
 
     @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
     private LocalDateTime updatedAt;
+
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    @Size(max = 255, message = "Cesta k avataru nesmie presiahnuť 255 znakov")
+    @Column(name = "avatar_path")
+    private String avatarPath;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "roles_id", nullable = false)
@@ -167,5 +180,43 @@ public class User {
 
     public String getFullName() {
         return firstName + " " + lastName;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    public String getAvatarPath() {
+        return avatarPath;
+    }
+
+    public void setAvatarPath(String avatarPath) {
+        this.avatarPath = avatarPath;
+    }
+
+    // Soft delete helper method
+    public void softDelete() {
+        this.deleted = true;
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public boolean isActive() {
+        return deleted == null || !deleted;
+    }
+
+    public boolean isDeleted() {
+        return deleted != null && deleted;
     }
 }

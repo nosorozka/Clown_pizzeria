@@ -23,8 +23,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+        User user = userRepository.findByEmailAndDeletedFalse(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found or deactivated: " + email));
+
+        // Check if user is active
+        if (user.isDeleted()) {
+            throw new UsernameNotFoundException("User account is deactivated: " + email);
+        }
 
         // RoleName already has ROLE_ prefix (e.g. ROLE_USER)
         String authority = user.getRole().getName().name();

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Môj profil')}"></head>
+  <body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card card-pizza">
+            <div class="card-body p-5">
+              <div class="text-center mb-4">
+                <div th:if="${user.avatarPath != null and !user.avatarPath.isEmpty()}">
+                  <img
+                    th:src="@{/uploads/{file}(file=${user.avatarPath})}"
+                    alt="Avatar"
+                    class="rounded-circle mb-3"
+                    style="width: 120px; height: 120px; object-fit: cover"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                  />
+                  <i
+                    class="bi bi-person-circle display-1"
+                    style="color: var(--primary-yellow); display: none"
+                  ></i>
+                </div>
+                <div th:unless="${user.avatarPath != null and !user.avatarPath.isEmpty()}">
+                  <i class="bi bi-person-circle display-1" style="color: var(--primary-yellow)"></i>
+                </div>
+                <h2
+                  class="mt-3"
+                  style="font-family: 'Fredoka One', cursive"
+                  th:text="${user.fullName}"
+                >
+                  Meno
+                </h2>
+                <p class="text-muted" th:text="${user.email}">email@example.com</p>
+              </div>
+
+              <div th:if="${success}" class="alert alert-success">
+                <i class="bi bi-check-circle me-2"></i><span th:text="${success}">Úspech</span>
+              </div>
+
+              <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                  <label class="text-muted small">Meno</label>
+                  <p class="h6" th:text="${user.firstName}">-</p>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="text-muted small">Priezvisko</label>
+                  <p class="h6" th:text="${user.lastName}">-</p>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="text-muted small">Email</label>
+                  <p class="h6" th:text="${user.email}">-</p>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="text-muted small">Dátum narodenia</label>
+                  <p
+                    class="h6"
+                    th:text="${user.dateOfBirth != null ? #temporals.format(user.dateOfBirth, 'dd.MM.yyyy') : '-'}"
+                  >
+                    -
+                  </p>
+                </div>
+                <div class="col-12 mb-3">
+                  <label class="text-muted small">Adresa</label>
+                  <p class="h6" th:text="${user.address != null ? user.address : '-'}">-</p>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="text-muted small">Rola</label>
+                  <p class="h6" th:text="${user.role.name}">-</p>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="text-muted small">Účet vytvorený</label>
+                  <p
+                    class="h6"
+                    th:text="${user.createdAt != null ? #temporals.format(user.createdAt, 'dd.MM.yyyy') : '-'}"
+                  >
+                    -
+                  </p>
+                </div>
+              </div>
+
+              <div class="d-grid gap-2">
+                <a th:href="@{/profile/edit}" class="btn btn-pizza">
+                  <i class="bi bi-pencil me-2"></i>Upraviť profil
+                </a>
+                <a th:href="@{/profile/change-password}" class="btn btn-outline-light">
+                  <i class="bi bi-key me-2"></i>Zmeniť heslo
+                </a>
+                <a th:href="@{/profile/change-email}" class="btn btn-outline-light">
+                  <i class="bi bi-envelope me-2"></i>Zmeniť mail
+                </a>
+                <a th:href="@{/}" class="btn btn-outline-light">
+                  <i class="bi bi-arrow-left me-2"></i>Späť na hlavnú stránku
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+  </body>
+</html>

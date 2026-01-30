@@ -37,27 +37,27 @@ INSERT INTO `mydb`.`ingredients` (`name`, `price`) VALUES
 ('Slanina', 2.50);
 
 -- Insert sample pizzas
-INSERT INTO `mydb`.`pizza` (`name`, `pizza_price`, `description`,`image_path`) VALUES
+INSERT INTO `mydb`.`pizza` (`name`, `pizza_price`, `description`, `image_path`, `slug`) VALUES
 
-('Capricciosa', 10.99, 'Tradičná pizza so šunkou, šampiňónmi, mozzarellou a paradajkovou omáčkou', 'capricciosa.webp'),
+('Capricciosa', 10.99, 'Tradičná pizza so šunkou, šampiňónmi, mozzarellou a paradajkovou omáčkou', 'capricciosa.webp', 'capricciosa'),
 
-('Carbonara', 11.49, 'Krémová pizza inšpirovaná carbonara s pancettou, syrom a jemnou smotanovou omáčkou', 'carbonara-pizza.webp'),
+('Carbonara', 11.49, 'Krémová pizza inšpirovaná carbonara s pancettou, syrom a jemnou smotanovou omáčkou', 'carbonara-pizza.webp', 'carbonara'),
 
-('Delicatezza Rustica', 12.49, 'Rustikálna pizza s prosciuttom, sušenými paradajkami, rukolou a parmezánom', 'delicatezza-rustica.webp'),
+('Delicatezza Rustica', 12.49, 'Rustikálna pizza s prosciuttom, sušenými paradajkami, rukolou a parmezánom', 'delicatezza-rustica.webp', 'delicatezza-rustica'),
 
-('Diavola Piccante', 11.99, 'Pikantná pizza s feferónkami, salámou a výraznou paradajkovou omáčkou', 'diavola-piccante.webp'),
+('Diavola Piccante', 11.99, 'Pikantná pizza s feferónkami, salámou a výraznou paradajkovou omáčkou', 'diavola-piccante.webp', 'diavola-piccante'),
 
-('Funghi', 10.49, 'Jednoduchá a obľúbená pizza so šampiňónmi a mozzarellou', 'funghi.webp'),
+('Funghi', 10.49, 'Jednoduchá a obľúbená pizza so šampiňónmi a mozzarellou', 'funghi.webp', 'funghi'),
 
-('Funghi al Panna', 10.99, 'Pizza so šampiňónmi na jemnej smotanovej omáčke s mozzarellou', 'funghi-al-panna.webp'),
+('Funghi al Panna', 10.99, 'Pizza so šampiňónmi na jemnej smotanovej omáčke s mozzarellou', 'funghi-al-panna.webp', 'funghi-al-panna'),
 
-('Gluten Free Primavera', 12.99, 'Bezlepková pizza so sezónnou zeleninou, ľahkou omáčkou a mozzarellou', 'gluten-free-primavera.webp'),
+('Gluten Free Primavera', 12.99, 'Bezlepková pizza so sezónnou zeleninou, ľahkou omáčkou a mozzarellou', 'gluten-free-primavera.webp', 'gluten-free-primavera'),
 
-('Havajská', 11.99, 'Kombinácia šunky a ananásu na paradajkovom základe s mozzarellou', 'hawaii-classic.webp'),
+('Havajská', 11.99, 'Kombinácia šunky a ananásu na paradajkovom základe s mozzarellou', 'hawaii-classic.webp', 'havajska'),
 
-('La Crema Bianca', 11.79, 'Biela pizza so smotanovou omáčkou, syrom mozzarella a jemným cesnakom', 'la-crema-bianca.webp'),
+('La Crema Bianca', 11.79, 'Biela pizza so smotanovou omáčkou, syrom mozzarella a jemným cesnakom', 'la-crema-bianca.webp', 'la-crema-bianca'),
 
-('Margherita Classica', 9.99, 'Klasická talianska pizza s paradajkovou omáčkou, mozzarellou a bazalkou', 'margherita-classica.webp')
+('Margherita Classica', 9.99, 'Klasická talianska pizza s paradajkovou omáčkou, mozzarellou a bazalkou', 'margherita-classica.webp', 'margherita-classica')
 ;
 
 -- Link pizzas with ingredients
@@ -86,6 +86,6 @@ INSERT INTO `mydb`.`pizza_has_tags` (`pizza_id`, `tags_id`) VALUES
 
 -- Insert staff users (password: Admin123! - BCrypt encoded)
 INSERT INTO `mydb`.`users` (`first_name`, `last_name`, `email`, `password`, `created_at`, `updated_at`, `roles_id`) VALUES 
-('Admin', 'Používateľ', 'admin@pizza.com', '$2a$10$VxgvANRs8lhXIJ4t11mR9evYy8FyTfjXYX8r.DDSxCh9nZOWSsE5G', CURDATE(), CURDATE(), 2),
-('Kuchár', 'Hlavný', 'kuchar@pizza.com', '$2a$10$VxgvANRs8lhXIJ4t11mR9evYy8FyTfjXYX8r.DDSxCh9nZOWSsE5G', CURDATE(), CURDATE(), 3),
-('Kuriér', 'Rýchly', 'kurier@pizza.com', '$2a$10$VxgvANRs8lhXIJ4t11mR9evYy8FyTfjXYX8r.DDSxCh9nZOWSsE5G', CURDATE(), CURDATE(), 4);
+('Admin', 'Používateľ', 'admin@pizza.com', '$2a$10$VxgvANRs8lhXIJ4t11mR9evYy8FyTfjXYX8r.DDSxCh9nZOWSsE5G', NOW(), NOW(), 2),
+('Kuchár', 'Hlavný', 'kuchar@pizza.com', '$2a$10$VxgvANRs8lhXIJ4t11mR9evYy8FyTfjXYX8r.DDSxCh9nZOWSsE5G', NOW(), NOW(), 3),
+('Kuriér', 'Rýchly', 'kurier@pizza.com', '$2a$10$VxgvANRs8lhXIJ4t11mR9evYy8FyTfjXYX8r.DDSxCh9nZOWSsE5G', NOW(), NOW(), 4);

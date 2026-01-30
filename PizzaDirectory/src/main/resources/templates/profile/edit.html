@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Upraviť profil')}"></head>
+  <body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card card-pizza">
+            <div class="card-body p-5">
+              <h2 class="mb-4" style="font-family: 'Fredoka One', cursive">
+                <i class="bi bi-pencil me-2" style="color: var(--primary-yellow)"></i>Upraviť profil
+              </h2>
+
+              <div th:if="${success}" class="alert alert-success">
+                <i class="bi bi-check-circle me-2"></i><span th:text="${success}">Úspech</span>
+              </div>
+
+              <div th:if="${error}" class="alert alert-danger">
+                <i class="bi bi-exclamation-circle me-2"></i><span th:text="${error}">Chyba</span>
+              </div>
+
+              <!-- Avatar upload form -->
+              <div class="text-center mb-4 p-4 border rounded">
+                <div th:if="${user.avatarPath != null and !user.avatarPath.isEmpty()}">
+                  <img
+                    th:src="@{/uploads/{file}(file=${user.avatarPath})}"
+                    alt="Avatar"
+                    class="rounded-circle mb-3"
+                    style="width: 120px; height: 120px; object-fit: cover"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                  />
+                  <i class="bi bi-person-circle display-1 text-muted" style="display: none"></i>
+                </div>
+                <div th:unless="${user.avatarPath != null and !user.avatarPath.isEmpty()}">
+                  <i class="bi bi-person-circle display-1 text-muted"></i>
+                </div>
+                <form
+                  th:action="@{/profile/avatar}"
+                  method="post"
+                  enctype="multipart/form-data"
+                  class="mt-3"
+                >
+                  <div class="mb-3">
+                    <label for="avatarFile" class="form-label">Nahrať nový avatar</label>
+                    <input
+                      type="file"
+                      class="form-control"
+                      id="avatarFile"
+                      name="avatarFile"
+                      accept="image/*"
+                    />
+                  </div>
+                  <button type="submit" class="btn btn-sm btn-outline-light">
+                    <i class="bi bi-upload me-2"></i>Nahrať
+                  </button>
+                </form>
+              </div>
+
+              <!-- Profile edit form -->
+              <form th:action="@{/profile/update}" th:object="${profileDto}" method="post">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Meno</label>
+                    <input
+                      type="text"
+                      th:field="*{firstName}"
+                      class="form-control"
+                      th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid' : ''"
+                      required
+                    />
+                    <div th:if="${#fields.hasErrors('firstName')}" class="invalid-feedback">
+                      <span th:errors="*{firstName}">Error</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Priezvisko</label>
+                    <input
+                      type="text"
+                      th:field="*{lastName}"
+                      class="form-control"
+                      th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid' : ''"
+                      required
+                    />
+                    <div th:if="${#fields.hasErrors('lastName')}" class="invalid-feedback">
+                      <span th:errors="*{lastName}">Error</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Email (iba na zobrazenie)</label>
+                    <input
+                      type="email"
+                      th:field="*{email}"
+                      class="form-control"
+                      readonly
+                      disabled
+                    />
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Dátum narodenia</label>
+                    <input
+                      type="date"
+                      th:field="*{dateOfBirth}"
+                      class="form-control"
+                      th:classappend="${#fields.hasErrors('dateOfBirth')} ? 'is-invalid' : ''"
+                    />
+                    <div th:if="${#fields.hasErrors('dateOfBirth')}" class="invalid-feedback">
+                      <span th:errors="*{dateOfBirth}">Error</span>
+                    </div>
+                  </div>
+
+                  <div class="col-12 mb-4">
+                    <label class="form-label">Adresa</label>
+                    <textarea
+                      th:field="*{address}"
+                      class="form-control"
+                      rows="2"
+                      th:classappend="${#fields.hasErrors('address')} ? 'is-invalid' : ''"
+                    ></textarea>
+                    <div th:if="${#fields.hasErrors('address')}" class="invalid-feedback">
+                      <span th:errors="*{address}">Error</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-pizza">
+                    <i class="bi bi-check-lg me-2"></i>Uložiť zmeny
+                  </button>
+                  <a th:href="@{/profile}" class="btn btn-outline-light">
+                    <i class="bi bi-x-lg me-2"></i>Zrušiť
+                  </a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+  </body>
+</html>

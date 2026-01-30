@@ -30,8 +30,10 @@ public class SecurityConfig {
                 .requestMatchers("/cook/**").hasRole("COOK")
                 // Courier pages
                 .requestMatchers("/courier/**").hasRole("COURIER")
-                // User pages (checkout, orders history)
-                .requestMatchers("/orders/**", "/checkout/**", "/profile/**").hasAnyRole("USER", "ADMIN")
+                // Orders & checkout — any authenticated user can place and view orders
+                .requestMatchers("/orders/**").authenticated()
+                // Profile pages - available for all authenticated users
+                .requestMatchers("/profile/**").authenticated()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

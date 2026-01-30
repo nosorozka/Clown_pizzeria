@@ -26,6 +26,12 @@ public class Ingredient {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted = false;
+
+    @Column(name = "deleted_at")
+    private java.time.LocalDateTime deletedAt;
+
     @ManyToMany(mappedBy = "ingredients")
     private Set<Pizza> pizzas = new HashSet<>();
 
@@ -67,5 +73,31 @@ public class Ingredient {
 
     public void setPizzas(Set<Pizza> pizzas) {
         this.pizzas = pizzas;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public java.time.LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(java.time.LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    // Soft delete helper method
+    public void softDelete() {
+        this.deleted = true;
+        this.deletedAt = java.time.LocalDateTime.now();
+    }
+
+    public boolean isDeleted() {
+        return deleted != null && deleted;
     }
 }

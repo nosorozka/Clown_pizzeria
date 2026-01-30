@@ -41,9 +41,22 @@
                 <i class="bi bi-clock me-1"></i>
                 <span th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy')}">Dátum</span>
               </p>
-              <p class="mb-3">
+              <p class="mb-2">
                 <i class="bi bi-person me-1"></i>
                 <span th:text="${order.user.fullName}">Zákazník</span>
+              </p>
+              <p class="mb-3" th:if="${order.cook != null}">
+                <i class="bi bi-chef-hat me-1"></i>
+                <span
+                  class="badge"
+                  th:classappend="${order.cook.id == currentUserId} ? 'bg-primary' : 'bg-secondary'"
+                  th:text="${order.cook.fullName}"
+                  >Kuchár</span
+                >
+              </p>
+              <p class="mb-3" th:unless="${order.cook != null}">
+                <i class="bi bi-chef-hat me-1"></i>
+                <span class="badge bg-warning text-dark">Nepriradené</span>
               </p>
 
               <div class="mb-3">
@@ -61,23 +74,35 @@
                 </ul>
               </div>
 
+              <div class="d-flex gap-2 mb-2" th:if="${order.user.id == currentUserId or (order.status.name() != 'DELIVERING' and order.status.name() != 'DELIVERED')}">
+                <form
+                  th:action="@{/cook/orders/{id}/status(id=${order.id})}"
+                  method="post"
+                  class="d-flex gap-2 flex-grow-1"
+                >
+                  <select name="status" class="form-select form-select-sm">
+                    <option
+                      th:each="s : ${statuses}"
+                      th:value="${s}"
+                      th:selected="${order.status == s}"
+                      th:text="${s.displayName}"
+                    >
+                      Stav
+                    </option>
+                  </select>
+                  <button type="submit" class="btn btn-pizza btn-sm">
+                    <i class="bi bi-check"></i>
+                  </button>
+                </form>
+              </div>
               <form
-                th:action="@{/cook/orders/{id}/status(id=${order.id})}"
+                th:if="${(order.user.id == currentUserId or (order.status.name() != 'DELIVERING' and order.status.name() != 'DELIVERED')) and order.status.name() == 'COOKING' and order.cook != null and order.cook.id == currentUserId}"
+                th:action="@{/cook/orders/{id}/rollback(id=${order.id})}"
                 method="post"
-                class="d-flex gap-2"
+                class="w-100"
               >
-                <select name="status" class="form-select form-select-sm">
-                  <option
-                    th:each="s : ${statuses}"
-                    th:value="${s}"
-                    th:selected="${order.status == s}"
-                    th:text="${s.displayName}"
-                  >
-                    Stav
-                  </option>
-                </select>
-                <button type="submit" class="btn btn-pizza btn-sm">
-                  <i class="bi bi-check"></i>
+                <button type="submit" class="btn btn-outline-warning btn-sm w-100">
+                  <i class="bi bi-arrow-counterclockwise me-1"></i>Vrátiť späť
                 </button>
               </form>
             </div>
@@ -96,6 +121,61 @@
           <i class="bi bi-check-circle display-1 text-success"></i>
           <h3 class="mt-3">Žiadne objednávky na prípravu</h3>
           <p class="text-muted">Všetko je hotové!</p>
+        </div>
+      </div>
+
+      <h2 class="mt-5 mb-3" style="font-family: 'Fredoka One', cursive">
+        <i class="bi bi-list-check me-2" style="color: var(--primary-yellow)"></i>Objednávky ktoré som pripravil
+      </h2>
+      <div class="card card-pizza">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Objednávka #</th>
+                  <th>Zákazník</th>
+                  <th>Dátum</th>
+                  <th>Stav</th>
+                  <th>Celkom</th>
+                  <th>Akcie</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="order : ${completedOrders}">
+                  <td th:text="'#' + ${order.id}">#1</td>
+                  <td th:text="${order.user.fullName}">Zákazník</td>
+                  <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy | HH:mm:ss')}">Dátum</td>
+                  <td>
+                    <span
+                      class="badge"
+                      th:classappend="${order.status.name() == 'DELIVERED'} ? 'bg-success' : (${order.status.name() == 'CANCELLED'} ? 'bg-danger' : (${order.status.name() == 'COOKING'} ? 'bg-info' : (${order.status.name() == 'READY'} ? 'bg-primary' : (${order.status.name() == 'DELIVERING'} ? 'bg-info' : 'bg-warning text-dark'))))"
+                      th:text="${order.status.displayName}"
+                      >Stav</span
+                    >
+                  </td>
+                  <td
+                    class="price-tag"
+                    style="font-size: 1rem"
+                    th:text="'€' + ${#numbers.formatDecimal(order.totalPrice, 1, 2)}"
+                  >
+                    €0.00
+                  </td>
+                  <td>
+                    <a
+                      th:href="@{/cook/orders/{id}(id=${order.id})}"
+                      class="btn btn-sm btn-outline-light"
+                    >
+                      <i class="bi bi-eye"></i>
+                    </a>
+                  </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(completedOrders)}">
+                  <td colspan="6" class="text-center text-muted py-4">Zatiaľ žiadne dokončené objednávky</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

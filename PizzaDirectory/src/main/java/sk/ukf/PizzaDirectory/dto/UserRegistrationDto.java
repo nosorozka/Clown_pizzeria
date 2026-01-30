@@ -16,12 +16,18 @@ public class UserRegistrationDto {
     private String lastName;
 
     @NotBlank(message = "Email je povinný")
-    @Email(message = "Email musí byť platný")
+    @Pattern(
+        regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+        message = "Zadajte platnú emailovú adresu"
+    )
     @Size(max = 45, message = "Email nesmie presiahnuť 45 znakov")
     private String email;
 
     @NotBlank(message = "Heslo je povinné")
-    @Size(min = 6, max = 100, message = "Heslo musí mať 6 až 100 znakov")
+    @Pattern(
+    regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$",
+    message = "Heslo musí mať aspoň 8 znakov, jednu veľkú písmeno, číslo a špeciálny znak"
+    )
     private String password;
 
     @NotBlank(message = "Potvrdenie hesla je povinné")

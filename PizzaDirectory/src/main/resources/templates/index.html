@@ -1,78 +1,151 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/layout :: head('Menu')}"></head>
-<body>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head th:replace="~{fragments/layout :: head('Menu')}"></head>
+  <body>
     <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
     <!-- Hero Section -->
-    <section class="py-5 text-center" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1920') center/cover;">
-        <div class="container py-5">
-            <h1 class="display-3 fw-bold" style="font-family: 'Fredoka One', cursive; color: var(--primary-yellow);">
-                <i class="bi bi-emoji-laughing"></i> Vitajte v Clown Pizzeria!
-            </h1>
-            <p class="lead text-white mb-4">Najšťastnejšia pizza v meste! Čerstvé suroviny, šialené chute, veľké úsmevy.</p>
-            <a th:href="@{/menu}" class="btn btn-pizza btn-lg px-5">
-                <i class="bi bi-grid me-2"></i>Zobraziť menu
-            </a>
-        </div>
+    <section
+      class="py-5 text-center"
+      style="
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+          url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1920') center/cover;
+      "
+    >
+      <div class="container py-5">
+        <h1
+          class="display-3 fw-bold"
+          style="font-family: 'Fredoka One', cursive; color: var(--primary-yellow)"
+        >
+          <i class="bi bi-emoji-laughing"></i> Vitajte v Clown Pizzeria!
+        </h1>
+        <p class="lead text-white mb-4">
+          Najšťastnejšia pizza v meste! Čerstvé suroviny, šialené chute, veľké úsmevy.
+        </p>
+        <a th:href="@{/menu}" class="btn btn-pizza btn-lg px-5">
+          <i class="bi bi-grid me-2"></i>Zobraziť menu
+        </a>
+      </div>
     </section>
 
     <div class="container py-5">
-        <!-- Search and Filter -->
-        <div class="row mb-4">
-            <div class="col-md-6 mb-3 mb-md-0">
-                <form th:action="@{/menu}" method="get" class="d-flex">
-                    <input type="text" name="search" class="form-control me-2" placeholder="Hľadať pizzu..." 
-                           th:value="${search}">
-                    <button type="submit" class="btn btn-pizza">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </form>
+      <!-- Search and Filter -->
+      <div class="row mb-4">
+        <div class="col-md-6 mb-3 mb-md-0">
+          <form th:action="@{/menu}" method="get" class="d-flex">
+            <input
+              type="text"
+              name="search"
+              class="form-control me-2"
+              placeholder="Hľadať pizzu..."
+              th:value="${search}"
+            />
+            <button type="submit" class="btn btn-pizza">
+              <i class="bi bi-search"></i>
+            </button>
+          </form>
+        </div>
+        <div class="col-md-6">
+          <div class="d-flex flex-wrap gap-2 justify-content-md-end">
+            <a
+              th:href="@{/menu}"
+              class="btn btn-sm"
+              th:classappend="${selectedTagId == null} ? 'btn-pizza' : 'btn-outline-light'"
+              >Všetky</a
+            >
+            <a
+              th:each="tag : ${tags}"
+              th:href="@{/menu(tagId=${tag.id})}"
+              class="btn btn-sm"
+              th:classappend="${selectedTagId == tag.id} ? 'btn-pizza' : 'btn-outline-light'"
+              th:text="${tag.name}"
+              >Tag</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Pizza Grid -->
+      <div class="row g-4">
+        <div th:each="pizza : ${pizzas}" class="col-sm-6 col-lg-4 col-xl-3">
+          <div class="card card-pizza h-100">
+            <img
+              th:src="${pizza.imagePath != null} ? @{'/uploads/' + ${pizza.imagePath}} : 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800'"
+              class="card-img-top"
+              th:alt="${pizza.name}"
+            />
+            <div class="card-body d-flex flex-column">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="card-title mb-0" th:text="${pizza.name}">Názov pizze</h5>
+                <span class="price-tag" th:text="'€' + ${#numbers.formatDecimal(pizza.price, 1, 2)}"
+                  >€0.00</span
+                >
+              </div>
+              <p class="card-text text-muted small flex-grow-1" th:text="${pizza.description}">
+                Popis
+              </p>
+              <div class="mb-3">
+                <span
+                  th:each="tag : ${pizza.tags}"
+                  class="badge badge-tag me-1"
+                  th:text="${tag.name}"
+                  >Tag</span
+                >
+              </div>
+              <a
+                th:href="@{/pizza/{slug}(slug=${pizza.slug})}"
+                class="btn btn-pizza w-100"
+              >
+                <i class="bi bi-eye me-1"></i>Zobraziť detaily
+              </a>
             </div>
-            <div class="col-md-6">
-                <div class="d-flex flex-wrap gap-2 justify-content-md-end">
-                    <a th:href="@{/menu}" class="btn btn-sm" 
-                       th:classappend="${selectedTagId == null} ? 'btn-pizza' : 'btn-outline-light'">Všetky</a>
-                    <a th:each="tag : ${tags}" 
-                       th:href="@{/menu(tagId=${tag.id})}" 
-                       class="btn btn-sm"
-                       th:classappend="${selectedTagId == tag.id} ? 'btn-pizza' : 'btn-outline-light'"
-                       th:text="${tag.name}">Tag</a>
-                </div>
-            </div>
+          </div>
         </div>
 
-        <!-- Pizza Grid -->
-        <div class="row g-4">
-            <div th:each="pizza : ${pizzas}" class="col-sm-6 col-lg-4 col-xl-3">
-                <div class="card card-pizza h-100">
-                    <img th:src="${pizza.imagePath != null} ? @{'/uploads/' + ${pizza.imagePath}} : 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800'"
-                         class="card-img-top" th:alt="${pizza.name}">
-                    <div class="card-body d-flex flex-column">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <h5 class="card-title mb-0" th:text="${pizza.name}">Názov pizze</h5>
-                            <span class="price-tag" th:text="'€' + ${#numbers.formatDecimal(pizza.price, 1, 2)}">€0.00</span>
-                        </div>
-                        <p class="card-text text-muted small flex-grow-1" th:text="${pizza.description}">Popis</p>
-                        <div class="mb-3">
-                            <span th:each="tag : ${pizza.tags}" class="badge badge-tag me-1" th:text="${tag.name}">Tag</span>
-                        </div>
-                        <a th:href="@{/pizza/{id}(id=${pizza.id})}" class="btn btn-pizza w-100">
-                            <i class="bi bi-eye me-1"></i>Zobraziť detaily
-                        </a>
-                    </div>
-                </div>
-            </div>
-            
-            <div th:if="${#lists.isEmpty(pizzas)}" class="col-12 text-center py-5">
-                <i class="bi bi-emoji-frown display-1 text-muted"></i>
-                <h4 class="mt-3">Žiadne pizze nenájdené</h4>
-                <p class="text-muted">Skúste upraviť vyhľadávanie alebo filter</p>
-            </div>
+        <div th:if="${#lists.isEmpty(pizzas)}" class="col-12 text-center py-5">
+          <i class="bi bi-emoji-frown display-1 text-muted"></i>
+          <h4 class="mt-3">Žiadne pizze nenájdené</h4>
+          <p class="text-muted">Skúste upraviť vyhľadávanie alebo filter</p>
         </div>
+      </div>
+
+      <!-- Pagination -->
+      <nav
+        th:if="${totalPages != null and totalPages > 1 and selectedTagId == null and (search == null or #strings.isEmpty(search))}"
+        class="mt-5"
+      >
+        <ul class="pagination justify-content-center">
+          <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+            <a class="page-link" th:href="@{/(page=${currentPage - 1})}">
+              <i class="bi bi-chevron-left"></i>
+            </a>
+          </li>
+
+          <li
+            class="page-item"
+            th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+            th:classappend="${i == currentPage} ? 'active'"
+          >
+            <a class="page-link" th:href="@{/(page=${i})}" th:text="${i + 1}">1</a>
+          </li>
+
+          <li class="page-item" th:classappend="${currentPage >= totalPages - 1} ? 'disabled'">
+            <a class="page-link" th:href="@{/(page=${currentPage + 1})}">
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+        </ul>
+        <p class="text-center text-muted">
+          Strana <span th:text="${currentPage + 1}">1</span> z
+          <span th:text="${totalPages}">1</span>
+        </p>
+      </nav>
     </div>
 
     <footer th:replace="~{fragments/layout :: footer}"></footer>
     <div th:replace="~{fragments/layout :: scripts}"></div>
-</body>
+  </body>
 </html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Zmeniť email')}"></head>
+  <body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card card-pizza">
+            <div class="card-body p-5">
+              <h2 class="mb-4" style="font-family: 'Fredoka One', cursive">
+                <i class="bi bi-envelope me-2" style="color: var(--primary-yellow)"></i>Zmeniť email
+              </h2>
+
+              <div th:if="${error}" class="alert alert-danger">
+                <i class="bi bi-exclamation-circle me-2"></i><span th:text="${error}">Chyba</span>
+              </div>
+
+              <p class="text-muted small mb-4">
+                Aktuálny email: <strong th:text="${user.email}">email@example.com</strong>
+              </p>
+
+              <form
+                th:action="@{/profile/change-email}"
+                th:object="${emailDto}"
+                method="post"
+                autocomplete="off"
+              >
+                <div class="mb-3">
+                  <label class="form-label">Nový email</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    <input
+                      type="email"
+                      th:field="*{newEmail}"
+                      class="form-control"
+                      th:classappend="${#fields.hasErrors('newEmail')} ? 'is-invalid' : ''"
+                      placeholder="Zadajte nový email"
+                      required
+                    />
+                  </div>
+                  <div th:if="${#fields.hasErrors('newEmail')}" class="invalid-feedback d-block">
+                    <span th:errors="*{newEmail}">Error</span>
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <label class="form-label">Potvrdiť heslo</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                    <input
+                      type="password"
+                      th:field="*{confirmPassword}"
+                      class="form-control"
+                      th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''"
+                      placeholder="Zadajte heslo na potvrdenie"
+                      autocomplete="current-password"
+                      required
+                    />
+                  </div>
+                  <div th:if="${#fields.hasErrors('confirmPassword')}" class="invalid-feedback d-block">
+                    <span th:errors="*{confirmPassword}">Error</span>
+                  </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-pizza">
+                    <i class="bi bi-check-lg me-2"></i>Zmeniť email
+                  </button>
+                  <a th:href="@{/profile/edit}" class="btn btn-outline-light">
+                    <i class="bi bi-x-lg me-2"></i>Zrušiť
+                  </a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+  </body>
+</html>

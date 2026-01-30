@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head('Detail používateľa')}"></head>
+  <body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <div class="container py-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 style="font-family: 'Fredoka One', cursive">
+          <i class="bi bi-person me-2" style="color: var(--primary-yellow)"></i>Detail používateľa
+        </h1>
+        <a th:href="@{/admin/users}" class="btn btn-outline-light">
+          <i class="bi bi-arrow-left me-2"></i>Späť na zoznam
+        </a>
+      </div>
+
+      <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle me-2"></i><span th:text="${success}">Úspech</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+        <i class="bi bi-exclamation-circle me-2"></i><span th:text="${error}">Chyba</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card card-pizza mb-4">
+            <div class="card-body p-4">
+              <h5 class="card-title mb-4">Informácie o používateľovi</h5>
+
+              <div class="row mb-3">
+                <div class="col-md-6 mb-3">
+                  <label class="text-muted small">ID</label>
+                  <p class="h6" th:text="${user.id}">1</p>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="text-muted small">Stav</label>
+                  <p>
+                    <span
+                      class="badge"
+                      th:classappend="${user.deleted} ? 'bg-secondary' : 'bg-success'"
+                      th:text="${user.deleted} ? 'Neaktívny' : 'Aktívny'"
+                      >Stav</span
+                    >
+                  </p>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6 mb-3">
+                  <label class="text-muted small">Meno</label>
+                  <p class="h6" th:text="${user.firstName}">-</p>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="text-muted small">Priezvisko</label>
+                  <p class="h6" th:text="${user.lastName}">-</p>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6 mb-3">
+                  <label class="text-muted small">Email</label>
+                  <p class="h6" th:text="${user.email}">-</p>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="text-muted small">Dátum narodenia</label>
+                  <p
+                    class="h6"
+                    th:text="${user.dateOfBirth != null ? #temporals.format(user.dateOfBirth, 'dd.MM.yyyy') : '-'}"
+                  >
+                    -
+                  </p>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="text-muted small">Adresa</label>
+                <p class="h6" th:text="${user.address != null ? user.address : '-'}">-</p>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6 mb-3">
+                  <label class="text-muted small">Účet vytvorený</label>
+                  <p
+                    class="h6"
+                    th:text="${user.createdAt != null ? #temporals.format(user.createdAt, 'dd.MM.yyyy HH:mm') : '-'}"
+                  >
+                    -
+                  </p>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="text-muted small">Naposledy aktualizovaný</label>
+                  <p
+                    class="h6"
+                    th:text="${user.updatedAt != null ? #temporals.format(user.updatedAt, 'dd.MM.yyyy HH:mm') : '-'}"
+                  >
+                    -
+                  </p>
+                </div>
+              </div>
+
+              <div th:if="${user.deleted}" class="mb-3">
+                <label class="text-muted small">Deaktivovaný dňa</label>
+                <p
+                  class="h6"
+                  th:text="${user.deletedAt != null ? #temporals.format(user.deletedAt, 'dd.MM.yyyy HH:mm') : '-'}"
+                >
+                  -
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <!-- Change Role Card -->
+          <div class="card card-pizza mb-4">
+            <div class="card-body">
+              <h5 class="card-title mb-3">Zmeniť rolu</h5>
+              <form th:action="@{/admin/users/{id}/change-role(id=${user.id})}" method="post">
+                <div class="mb-3">
+                  <label class="form-label">Aktuálna rola</label>
+                  <p>
+                    <span
+                      class="badge"
+                      th:classappend="${user.role.name.name() == 'ROLE_ADMIN'} ? 'bg-danger' : (${user.role.name.name() == 'ROLE_COOK'} ? 'bg-info' : (${user.role.name.name() == 'ROLE_COURIER'} ? 'bg-warning' : 'bg-success'))"
+                      th:text="${user.role.name}"
+                      >ROLE</span
+                    >
+                  </p>
+                </div>
+                <div class="mb-3">
+                  <label for="role" class="form-label">Nová rola</label>
+                  <select class="form-select" id="role" name="role" required>
+                    <option
+                      th:each="roleName : ${roles}"
+                      th:value="${roleName}"
+                      th:text="${roleName}"
+                      th:selected="${user.role.name == roleName}"
+                    >
+                      Role
+                    </option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-pizza w-100">
+                  <i class="bi bi-arrow-repeat me-2"></i>Zmeniť rolu
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Actions Card -->
+          <div class="card card-pizza">
+            <div class="card-body">
+              <h5 class="card-title mb-3">Akcie</h5>
+
+              <div th:if="${!user.deleted}" class="d-grid gap-2">
+                <form
+                  th:action="@{/admin/users/{id}/deactivate(id=${user.id})}"
+                  method="post"
+                  onsubmit="return confirm('Naozaj chcete deaktivovať tohto používateľa?');"
+                >
+                  <button type="submit" class="btn btn-outline-danger w-100">
+                    <i class="bi bi-x-circle me-2"></i>Deaktivovať
+                  </button>
+                </form>
+              </div>
+
+              <div th:if="${user.deleted}" class="d-grid gap-2">
+                <form th:action="@{/admin/users/{id}/activate(id=${user.id})}" method="post">
+                  <button type="submit" class="btn btn-outline-success w-100">
+                    <i class="bi bi-check-circle me-2"></i>Aktivovať
+                  </button>
+                </form>
+              </div>
+
+              <hr style="border-color: rgba(255,255,255,0.2);" />
+              <form
+                th:action="@{/admin/users/{id}/delete(id=${user.id})}"
+                method="post"
+                class="d-grid"
+                onsubmit="return confirm('Naozaj chcete natrvalo vymazať tohto používateľa z databázy? Všetky jeho objednávky budú vymazané. Táto akcia sa nedá vrátiť späť.');"
+              >
+                <button type="submit" class="btn btn-outline-danger w-100">
+                  <i class="bi bi-trash me-2"></i>Vymazať používateľa
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <a th:href="@{/admin}" class="btn btn-outline-light mt-4">
+        <i class="bi bi-arrow-left me-2"></i>Späť na administráciu
+      </a>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+  </body>
+</html>

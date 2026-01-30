@@ -25,15 +25,18 @@ public class PizzaController {
         this.cartService = cartService;
     }
 
-    @GetMapping("/{id}")
-    public String pizzaDetail(@PathVariable Integer id, Model model, HttpSession session) {
-        Pizza pizza = pizzaService.findByIdWithDetails(id);
-        
+    /**
+     * Public pizza detail is canonical by SLUG only.
+     * (No id-or-slug guessing to avoid ambiguous URLs and edge cases like slug="123".)
+     */
+    @GetMapping("/{slug}")
+    public String pizzaDetail(@PathVariable String slug, Model model, HttpSession session) {
+        Pizza pizza = pizzaService.findBySlug(slug);
+
         model.addAttribute("pizza", pizza);
         model.addAttribute("sizes", sizeService.findAll());
         model.addAttribute("cartCount", cartService.getCartItemCount(session));
-        
+
         return "pizza/detail";
     }
 }
-

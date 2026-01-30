@@ -64,6 +64,22 @@
         color: var(--primary-yellow) !important;
       }
 
+      .nav-login-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.375rem 0.75rem;
+        line-height: 1.2;
+        border-radius: 50px;
+      }
+
+      .btn-outline-light {
+        border-radius: 50px;
+        border-width: 2px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
       .btn-pizza {
         background: linear-gradient(135deg, var(--primary-red), #ff6b6b);
         border: none;
@@ -152,6 +168,13 @@
         border-color: var(--primary-yellow);
         color: var(--text-light);
         box-shadow: 0 0 0 0.25rem rgba(255, 190, 11, 0.25);
+      }
+
+      .form-control:disabled,
+      .form-control[readonly] {
+        background: var(--card-bg) !important;
+        color: var(--text-light) !important;
+        opacity: 1;
       }
 
       .table {
@@ -261,10 +284,36 @@
         color: white !important;
       }
 
-      html, body {
+      html,
+      body {
         height: 100%;
       }
 
+      /* Pagination styles */
+      .pagination .page-link {
+        background: var(--card-bg);
+        border-color: rgba(255, 255, 255, 0.1);
+        color: var(--text-light);
+      }
+
+      .pagination .page-link:hover {
+        background: rgba(255, 190, 11, 0.2);
+        border-color: var(--primary-yellow);
+        color: var(--primary-yellow);
+      }
+
+      .pagination .page-item.active .page-link {
+        background: var(--primary-yellow);
+        border-color: var(--primary-yellow);
+        color: #1a1a2e;
+        font-weight: bold;
+      }
+
+      .pagination .page-item.disabled .page-link {
+        background: var(--card-bg);
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #6c757d;
+      }
     </style>
   </head>
 
@@ -285,7 +334,7 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link" th:href="@{/}"><i class="bi bi-house me-1"></i>Domov</a>
+            <a class="nav-link" th:href="@{/profile}"><i class="bi bi-house me-1"></i>Domov</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" th:href="@{/menu}"><i class="bi bi-grid me-1"></i>Menu</a>
@@ -319,7 +368,7 @@
           </li>
         </ul>
         <ul class="navbar-nav">
-          <li class="nav-item me-3" sec:authorize="hasRole('USER') or !isAuthenticated()">
+          <li class="nav-item me-3">
             <a class="nav-link position-relative" th:href="@{/cart}">
               <i class="bi bi-cart3 fs-5"></i>
               <span
@@ -331,10 +380,10 @@
               >
             </a>
           </li>
-          <li class="nav-item" sec:authorize="!isAuthenticated()">
-            <a class="btn btn-outline-light btn-sm me-2" th:href="@{/auth/login}">Prihlásiť</a>
+          <li class="nav-item d-flex align-items-center" sec:authorize="!isAuthenticated()">
+            <a class="btn btn-outline-light btn-sm me-2 nav-login-btn" th:href="@{/auth/login}">Prihlásiť</a>
           </li>
-          <li class="nav-item" sec:authorize="!isAuthenticated()">
+          <li class="nav-item d-flex align-items-center" sec:authorize="!isAuthenticated()">
             <a class="btn btn-pizza btn-sm" th:href="@{/auth/register}">Registrácia</a>
           </li>
           <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
@@ -343,6 +392,11 @@
               <span sec:authentication="principal.username">Používateľ</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+              <li sec:authorize="isAuthenticated()">
+                <a class="dropdown-item" th:href="@{/profile}">
+                  <i class="bi bi-person me-2"></i>Môj profil
+                </a>
+              </li>
               <li sec:authorize="hasRole('USER')">
                 <a class="dropdown-item" th:href="@{/orders}">
                   <i class="bi bi-receipt me-2"></i>Moje objednávky
@@ -387,7 +441,6 @@
       <p class="text-muted small mb-0">&copy; 2026 Clown Pizzeria. Všetky práva vyhradené.</p>
     </div>
   </footer>
-
 
   <!-- Scripts Fragment -->
   <div th:fragment="scripts">
